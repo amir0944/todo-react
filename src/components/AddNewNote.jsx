@@ -19,6 +19,7 @@ const AddNewNote = ({ onAddNote }) => {
     onAddNote(newNote);
     setTitle("");
     setDesc("");
+    
   };
   return (
     <div className="add-new-note">

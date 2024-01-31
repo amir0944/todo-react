@@ -4,25 +4,51 @@ import NoteList from "./components/NoteList";
 import { useState } from "react";
 import NoteStatus from "./components/NoteStatus";
 import NoteHeader from "./components/NoteHeader";
+import { useReducer } from "react";
+
+const notesReducer = (state, action) => {
+  switch (action.type) {
+    case "add": {
+      return [...state, action.paylod];   
+    }
+    case "delete": {
+      return state.filter((item) => item.id !== action.paylod);
+    }
+    case "completed": {
+      return state.map((item) =>
+        item.id == action.paylod
+          ? { ...item, completed: !item.completed }
+          : item
+      );
+    }
+    default:
+      throw new Error("Error");
+  }
+};
+
 function App() {
-  const [notes, setNotes] = useState([]);
+  // const [notes, setNotes] = useState([]);
+  const [notes, dispatch] = useReducer(notesReducer, []);
   const [sortBy, setSortBy] = useState("latest");
 
   const handleAddNote = (newNote) => {
-    setNotes((prevNotes) => [...prevNotes, newNote]);
+    // setNotes((prevNotes) => [...prevNotes, newNote]);
+    dispatch({ type: "add", paylod: newNote });
   };
   const handleDeleteNote = (id) => {
     // const filteredNote = notes.filter((x) => x.id !== id);
     // setNotes(filteredNote);
-    setNotes((prevNotes) => prevNotes.filter((x) => x.id !== id));
+    // setNotes((prevNotes) => prevNotes.filter((x) => x.id !== id));
+    dispatch({ type: "delete", paylod: id });
   };
   const handleCompleteNote = (e) => {
     const noteId = Number(e.target.value);
-    setNotes((prevNotes) =>
-      prevNotes.map((note) =>
-        note.id == noteId ? { ...note, completed: !note.completed } : note
-      )
-    );
+    dispatch({ type: "completed", paylod: noteId });
+    // setNotes((prevNotes) =>
+    //   prevNotes.map((note) =>
+    //     note.id == noteId ? { ...note, completed: !note.completed } : note
+    //   )
+    // );
   };
 
   return (
